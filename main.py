@@ -11,6 +11,7 @@ import tqdm
 import json
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers.generation import GenerationConfig
 # ----------------------- Some functions -----------------------------
 from googletrans import Translator
 
@@ -42,10 +43,11 @@ def init_model():
         CHECKPOINT_PATH,
         device_map=device_map,
         trust_remote_code=True
-    )
+    ).eval()
+
+    config = GenerationConfig.from_pretrained(CHECKPOINT_PATH, trust_remote_code=True)
     tokenizer = AutoTokenizer.from_pretrained(
         CHECKPOINT_PATH,
-        use_fast=False,
         trust_remote_code=True
     )
     return model, tokenizer
@@ -108,25 +110,21 @@ with tab3:
     model, tokenizer = init_model()
     messages = init_chat_history()
 
-    prompt = st.text_input("Type your message and press Enter:")
-
-    if st.button("Send"):
-        st.write(f"🧑‍💻 user: {prompt}")
+    if prompt := st.chat_input("Shift + Enter 换行, Enter 发送"):
+        with st.chat_message("user", avatar='🧑‍💻'):
+            st.markdown(prompt)
         messages.append({"role": "user", "content": prompt})
+        print(f"[user] {prompt}", flush=True)
+        with st.chat_message("assistant", avatar='🤖'):
+            placeholder = st.empty()
+            for response in model.chat(tokenizer, messages, stream=True):
+                placeholder.markdown(response)
+                if torch.backends.mps.is_available():
+                    torch.mps.empty_cache()
+        messages.append({"role": "assistant", "content": response + translate_chinese_to_english(response)})
+        print(json.dumps(messages, ensure_ascii=False), flush=True)
 
-        # Generate a response from the model (simplified for demonstration)
-        inputs = tokenizer.encode(prompt, return_tensors="pt")
-        outputs = model.generate(inputs)
-        response = tokenizer.decode(outputs[0], skip_special_tokens=True)
-        response = response + translate_chinese_to_english(response)
-        st.write(f"🤖 assistant: {response}")
-        messages.append({"role": "assistant", "content": response})
-
-        st.session_state.messages = messages
-
-    if st.button("Clear Chat"):
-        clear_chat_history()
-        st.session_state.messages = []
+    st.button("清空对话", on_click=clear_chat_history)
 
 with tab4:
     st.header('About')
