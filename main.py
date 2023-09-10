@@ -31,7 +31,7 @@ import streamlit as st
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 # Set fixed settings (equivalent to parsed arguments in the original code)
-CHECKPOINT_PATH = './Models/hackduke-llm'
+CHECKPOINT_PATH = '/mnt/h/HackDuke/Models/hackduke_llm'
 CPU_ONLY = False
 
 
