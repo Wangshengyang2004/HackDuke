@@ -57,12 +57,16 @@ def clear_chat_history():
     del st.session_state.messages
 
 def init_chat_history():
-    if "messages" not in st.session_state:
-        st.session_state.messages = []
+    with st.chat_message("assistant", avatar='🤖'):
+        st.markdown("您好，我是百川大模型，很高兴为您服务🥰")
 
-    for message in st.session_state.messages:
-        avatar = '🧑‍💻' if message["role"] == "user" else '🤖'
-        st.write(f"{avatar} {message['role']}: {message['content']}")
+    if "messages" in st.session_state:
+        for message in st.session_state.messages:
+            avatar = '🧑‍💻' if message["role"] == "user" else '🤖'
+            with st.chat_message(message["role"], avatar=avatar):
+                st.markdown(message["content"])
+    else:
+        st.session_state.messages = []
 
     return st.session_state.messages
 
