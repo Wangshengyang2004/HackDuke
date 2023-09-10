@@ -39,6 +39,7 @@ def convert_messages_to_string(messages):
     return history_str
 
 
+
 # Set fixed settings (equivalent to parsed arguments in the original code)
 CHECKPOINT_PATH = '/mnt/h/HackDuke/Models/hackduke_llm_backup'
 CPU_ONLY = False
@@ -127,18 +128,21 @@ if option == 'U-Net Segmentation':
 
 if option == 'Chatbot':
     model, tokenizer = init_model()
-    messages = init_chat_history()
+    messages = init_chat_history()  # Initialize your chat history, assumed to be a list of dictionaries
 
     if prompt := st.chat_input("Shift + Enter 换行, Enter 发送"):
         with st.chat_message("user", avatar='🧑‍💻'):
             st.markdown(prompt)
         messages.append({"role": "user", "content": prompt})
         print(f"[user] {prompt}", flush=True)
+        
+        # Convert the messages to a string history
         history = convert_messages_to_string(messages)
-        st.write(history)
+        st.write(history)  # Debug line to see the history string
+        
         with st.chat_message("assistant", avatar='🤖'):
             placeholder = st.empty()
-            for response in model.chat_stream(tokenizer, prompt, history=history, stream=True):
+            for response, updated_history in model.chat_stream(tokenizer, prompt, history=history, stream=True):
                 placeholder.markdown(response)
                 if torch.backends.mps.is_available():
                     torch.mps.empty_cache()
@@ -148,6 +152,7 @@ if option == 'Chatbot':
         print(json.dumps(messages, ensure_ascii=False), flush=True)
 
         st.button("清空对话", on_click=clear_chat_history)
+
 
 if option == 'About':
     st.header('About')
