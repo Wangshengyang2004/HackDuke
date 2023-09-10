@@ -136,13 +136,11 @@ if option == 'Chatbot':
         messages.append({"role": "user", "content": prompt})
         print(f"[user] {prompt}", flush=True)
         
-        # Convert the messages to a string history
-        history = convert_messages_to_string(messages)
-        st.write(history)  # Debug line to see the history string
         
         with st.chat_message("assistant", avatar='🤖'):
             placeholder = st.empty()
-            for response, updated_history in model.chat_stream(tokenizer, prompt, history=history, stream=True):
+            history =None
+            for response,history  in model.chat_stream(tokenizer, prompt, history=history, stream=True):
                 placeholder.markdown(response)
                 if torch.backends.mps.is_available():
                     torch.mps.empty_cache()
