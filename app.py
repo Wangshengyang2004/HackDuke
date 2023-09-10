@@ -33,7 +33,7 @@ def translate_chinese_to_english(chinese_text):
 
 
 # Set fixed settings (equivalent to parsed arguments in the original code)
-CHECKPOINT_PATH = '/mnt/h/HackDuke/Models/hackduke_llm'
+CHECKPOINT_PATH = '/mnt/h/HackDuke/Models/hackduke_llm_backup'
 CPU_ONLY = False
 
 
