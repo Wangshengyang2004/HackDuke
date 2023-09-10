@@ -4,7 +4,7 @@ import torch
 import numpy as np
 from PIL import Image
 import streamlit as st
-
+import cv2
 class ConvBlock(torch.nn.Module):
     def __init__(self, in_channels, out_channels):
         super().__init__()
@@ -72,8 +72,14 @@ class UNet(torch.nn.Module):
         # 定义上采样
         # input: 512 x 32 x 32，output: 512 x 64 x 64
         x5 = self.upsample(x4)
-        # 拼接,output: 768x 64 x 64
-        x5 = torch.cat([x5,x3],dim=1)
+        if x5.size()[2:] != x3.size()[2:]:
+            diffY = x3.size()[2] - x5.size()[2]
+            diffX = x3.size()[3] - x5.size()[3]
+            x5 = torch.nn.functional.pad(x5, [diffX // 2, diffX - diffX // 2, diffY // 2, diffY - diffY // 2])
+        
+        # Concatenation
+        x5 = torch.cat([x5, x3], dim=1)
+
         # input: 768x 64 x 64,output: 256 x 64 x 64
         x5 = self.layer5(x5)
         
@@ -161,7 +167,7 @@ def segment_single_image(_pil_image):
 from cv2 import VideoWriter, VideoWriter_fourcc
 
 @st.cache_resource
-def segment_images_to_video(np_arrays, video_path, fps=30):
+def segment_images_to_video(np_arrays, video_path, fps=3):
     """
     Segment a list of images in NumPy array format and save the output as a video.
 
@@ -176,7 +182,7 @@ def segment_images_to_video(np_arrays, video_path, fps=30):
     # Initialize video writer
     height, width = np_arrays[0].shape
     fourcc = VideoWriter_fourcc(*'mp4v')
-    video = VideoWriter(video_path, fourcc, float(fps), (width, height), isColor=False)
+    video = VideoWriter(video_path, fourcc, float(fps), (width, height), isColor=True)
 
     for np_array in np_arrays:
         # Convert NumPy array to PIL image
@@ -186,9 +192,10 @@ def segment_images_to_video(np_arrays, video_path, fps=30):
         segmented_pil_image = segment_single_image(pil_image)
         
         # Convert the PIL image to a NumPy array
-        frame = np.array(segmented_pil_image.convert('L'))
+        frame_rgb = np.array(segmented_pil_image)
+        frame_bgr = cv2.cvtColor(frame_rgb, cv2.COLOR_RGB2BGR)
         
         # Write the frame to the video
-        video.write(frame)
+        video.write(frame_bgr)
         
     video.release()
