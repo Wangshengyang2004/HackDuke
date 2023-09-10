@@ -8,6 +8,9 @@ import cv2
 import os
 import numpy as np
 import tqdm
+import json
+import torch
+from transformers import AutoModelForCausalLM, AutoTokenizer
 # ----------------------- Some functions -----------------------------
 from googletrans import Translator
 
@@ -25,10 +28,7 @@ def translate_chinese_to_english(chinese_text):
     # Return the translated text.
     return translated.text
 
-import json
-import torch
-import streamlit as st
-from transformers import AutoModelForCausalLM, AutoTokenizer
+
 
 # Set fixed settings (equivalent to parsed arguments in the original code)
 CHECKPOINT_PATH = '/mnt/h/HackDuke/Models/hackduke_llm'
