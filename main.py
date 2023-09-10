@@ -1,6 +1,6 @@
 import streamlit as st
 from PIL import Image
-from utils import segment_single_image
+from utils import segment_single_image, segment_images_to_video
 import matplotlib.pyplot as plt
 from natsort import natsorted
 import glob
@@ -82,12 +82,12 @@ with tab1:
         st.write("Uploaded image:")
         pil_image = Image.open(uploaded_file)
         st.image(pil_image, caption='Uploaded Image', use_column_width=True)
+        if st.button('Inference'):    
+            st.write("Performing segmentation...")
+            segmented_image = segment_single_image(pil_image)
         
-        st.write("Performing segmentation...")
-        segmented_image = segment_single_image(pil_image)
-    
-    st.write("Segmented image:")
-    st.image(segmented_image, caption='Segmented Image', use_column_width=True)
+            st.write("Segmented image:")
+            st.image(segmented_image, caption='Segmented Image', use_column_width=True)
 
 with tab2:
     st.header('Video Segmentation')
