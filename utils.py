@@ -111,6 +111,9 @@ model = UNet().to(device)
 model.load_state_dict(torch.load('./save_model/unet_best.pt'))
 model.eval()
 
+
+from PIL import ImageEnhance
+
 @st.cache_resource
 def segment_single_image(_pil_image):
     """
@@ -120,7 +123,7 @@ def segment_single_image(_pil_image):
         pil_image (PIL.Image.Image): The input image in PIL format.
 
     Returns:
-        PIL.Image.Image: The segmented image.
+        PIL.Image.Image: The segmented image with overlay.
     """
     # Convert the PIL image to a NumPy array
     input_image = np.array(_pil_image.convert('L'))
@@ -139,13 +142,21 @@ def segment_single_image(_pil_image):
     # Post-process the output
     output_mask = (output_tensor.detach().cpu().numpy()[0][0] > 0.5).astype(np.uint8)
 
+    # Convert the mask to RGB format
+    mask_rgb = np.stack([output_mask * 255] * 3, axis=2)
+
+    # Convert the original image to RGB format
+    original_rgb = np.array(_pil_image.convert('RGB'))
+
+    # Alpha blend the mask and the original image
+    alpha = 0.8
+    blended = (alpha * mask_rgb + (1 - alpha) * original_rgb).astype(np.uint8)
+
     # Convert the NumPy array back to PIL image
-    segmented_image = Image.fromarray((output_mask * 255).astype(np.uint8), 'L')
+    blended_pil_image = Image.fromarray(blended, 'RGB')
 
-    return segmented_image
+    return blended_pil_image
 
-# utils.py
-# ... (existing imports and model definitions)
 
 from cv2 import VideoWriter, VideoWriter_fourcc
 
