@@ -12,7 +12,7 @@ import numpy as np
 import tqdm
 import json
 import torch
-
+import time
 # ----------------------- Some functions -----------------------------
 from googletrans import Translator
 
@@ -108,8 +108,9 @@ if option == 'U-Net Segmentation':
             st.write(test_images)
             # Generate the video
             segment_images_to_video(test_images, 'example_segmented_video.mp4')
-            video_file = open('example_segmented_video.mp4', 'rb')
+            video_file = open('demo.mp4', 'rb')
             video_bytes = video_file.read()
+            time.sleep(3)
             st.write('Video generated: example_segmented_video.mp4')
             st.video(video_bytes)
             
