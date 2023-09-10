@@ -2,7 +2,7 @@ import streamlit as st
 from PIL import Image
 from utils import segment_single_image
 import matplotlib.pyplot as plt
-import natsorted
+from natsort import natsorted
 import glob
 import cv2
 import os
