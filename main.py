@@ -35,7 +35,7 @@ CHECKPOINT_PATH = '/mnt/h/HackDuke/Models/hackduke_llm'
 CPU_ONLY = False
 
 
-@st.cache(allow_output_mutation=True)
+@st.cache_resource
 def init_model():
     device_map = "cpu" if CPU_ONLY else "auto"
     model = AutoModelForCausalLM.from_pretrained(

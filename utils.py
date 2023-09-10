@@ -112,7 +112,7 @@ model.load_state_dict(torch.load('./save_model/unet_best.pt'))
 model.eval()
 
 @st.cache_resource
-def segment_single_image(pil_image):
+def segment_single_image(_pil_image):
     """
     Segment a single image using a pre-trained U-Net model.
 
@@ -123,7 +123,7 @@ def segment_single_image(pil_image):
         PIL.Image.Image: The segmented image.
     """
     # Convert the PIL image to a NumPy array
-    input_image = np.array(pil_image.convert('L'))
+    input_image = np.array(_pil_image.convert('L'))
 
     # Normalize the image
     input_image = input_image / 255.0
@@ -150,7 +150,7 @@ def segment_single_image(pil_image):
 from cv2 import VideoWriter, VideoWriter_fourcc
 
 @st.cache_resource
-def segment_images_to_video(pil_images, video_path, fps=30):
+def segment_images_to_video(_pil_images, video_path, fps=30):
     """
     Segment a list of images and save the output as a video.
 
@@ -163,11 +163,11 @@ def segment_images_to_video(pil_images, video_path, fps=30):
         None
     """
     # Initialize video writer
-    width, height = pil_images[0].size
+    width, height = _pil_images[0].size
     fourcc = VideoWriter_fourcc(*'mp4v')
     video = VideoWriter(video_path, fourcc, float(fps), (width, height), isColor=False)
 
-    for pil_image in pil_images:
+    for pil_image in _pil_images:
         # Segment the image
         segmented_pil_image = segment_single_image(pil_image)
         
