@@ -133,8 +133,8 @@ if option == 'Chatbot':
                 placeholder.markdown(response)
                 if torch.backends.mps.is_available():
                     torch.mps.empty_cache()
-            translation = st.chat_message("assistant")
-            translation.write(translate_chinese_to_english(response))
+            
+            st.write(translate_chinese_to_english(response))
         messages.append({"role": "assistant", "content": response})
         print(json.dumps(messages, ensure_ascii=False), flush=True)
 
