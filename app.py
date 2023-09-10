@@ -140,7 +140,7 @@ if option == 'Chatbot':
         with st.chat_message("assistant", avatar='🤖'):
             placeholder = st.empty()
             history =None
-            for response,history  in model.chat_stream(tokenizer, prompt, history=history, stream=True):
+            for response,history  in model.chat_stream(tokenizer, prompt, history=None, stream=True):
                 placeholder.markdown(response)
                 if torch.backends.mps.is_available():
                     torch.mps.empty_cache()
