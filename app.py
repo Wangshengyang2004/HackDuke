@@ -81,7 +81,7 @@ option = st.selectbox('Please select a function',('U-Net Segmentation', 'Chatbot
 
 
 if option == 'U-Net Segmentation':
-    tab1, tab2, tab3 = st.tabs(["Image Segmentation", "Video Segmentation", "About"])
+    tab1, tab2 = st.tabs(["Image Segmentation", "Video Segmentation"])
     with tab1:
         st.header('Segmentation')
         
@@ -112,16 +112,6 @@ if option == 'U-Net Segmentation':
             st.write('Video generated: example_segmented_video.mp4')
 
 
-    with tab3:
-        st.header('About')
-        st.write('''### This project aims to build a chatbot that can answer questions about COVID-19, and can also segment the lung from the CT scan image.
-                #### This is a project for HackDuke 2023 September Health Track.
-                #### The chatbot is fine-tuned from Qwen-7B-Chat model from Aliyun.
-                ''')
-        st.write("Team member: Shengyang Wang, Guangzhi Su")
-        st.write('**Github**: github.com/Wangshengyang2004')
-        st.write('**Devpost**: devpost.com/software/covid-19-cv-chatbot')
-        st.write('Reference: https://github.com/hiyouga/LLaMA-Efficient-Tuning, https://github.com/QwenLM/Qwen-7B/tree/main')
 
 
 if option == 'Chatbot':
@@ -145,3 +135,14 @@ if option == 'Chatbot':
         print(json.dumps(messages, ensure_ascii=False), flush=True)
 
     st.button("清空对话", on_click=clear_chat_history)
+
+if option == 'About':
+    st.header('About')
+    st.write('''### This project aims to build a chatbot that can answer questions about COVID-19, and can also segment the lung from the CT scan image.
+            #### This is a project for HackDuke 2023 September Health Track.
+            #### The chatbot is fine-tuned from Qwen-7B-Chat model from Aliyun.
+            ''')
+    st.write("Team member: Shengyang Wang, Guangzhi Su")
+    st.write('**Github**: github.com/Wangshengyang2004')
+    st.write('**Devpost**: devpost.com/software/covid-19-cv-chatbot')
+    st.write('Reference: https://github.com/hiyouga/LLaMA-Efficient-Tuning, https://github.com/QwenLM/Qwen-7B/tree/main')
