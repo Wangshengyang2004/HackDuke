@@ -127,7 +127,7 @@ if option == 'Chatbot':
         print(f"[user] {prompt}", flush=True)
         with st.chat_message("assistant", avatar='🤖'):
             placeholder = st.empty()
-            for response in model.chat(tokenizer, messages, stream=True):
+            for response in model.chat(tokenizer, history = messages, stream=True):
                 placeholder.markdown(response)
                 if torch.backends.mps.is_available():
                     torch.mps.empty_cache()
