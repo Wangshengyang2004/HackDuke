@@ -115,26 +115,24 @@ if option == 'U-Net Segmentation':
 
 
 if option == 'Chatbot':
-    st.header('Chatbot')
     model, tokenizer = init_model()
     messages = init_chat_history()
-    #history = []
+
     if prompt := st.chat_input("Shift + Enter 换行, Enter 发送"):
         with st.chat_message("user", avatar='🧑‍💻'):
             st.markdown(prompt)
         messages.append({"role": "user", "content": prompt})
-        #history = history.append(prompt)
         print(f"[user] {prompt}", flush=True)
         with st.chat_message("assistant", avatar='🤖'):
             placeholder = st.empty()
-            for response in model.chat_stream(tokenizer, prompt, str(messages), stream=True):
+            for response in model.chat_stream(tokenizer, prompt, history=None, stream=True):
                 placeholder.markdown(response)
                 if torch.backends.mps.is_available():
                     torch.mps.empty_cache()
-        messages.append({"role": "assistant", "content": response + translate_chinese_to_english(response)})
+        messages.append({"role": "assistant", "content": response})
         print(json.dumps(messages, ensure_ascii=False), flush=True)
 
-    st.button("清空对话", on_click=clear_chat_history)
+        st.button("清空对话", on_click=clear_chat_history)
 
 if option == 'About':
     st.header('About')
