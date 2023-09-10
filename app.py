@@ -119,16 +119,16 @@ if option == 'Chatbot':
     st.write('chatbot, start your conversation')
     model, tokenizer = init_model()
     messages = init_chat_history()
-    history = []
+    #history = []
     if prompt := st.chat_input("Shift + Enter 换行, Enter 发送"):
         with st.chat_message("user", avatar='🧑‍💻'):
             st.markdown(prompt)
         messages.append({"role": "user", "content": prompt})
-        history = history.append(prompt)
+        #history = history.append(prompt)
         print(f"[user] {prompt}", flush=True)
         with st.chat_message("assistant", avatar='🤖'):
             placeholder = st.empty()
-            for response in model.chat(tokenizer, messages, history, stream=True):
+            for response in model.chat(tokenizer, messages, messages, stream=True):
                 placeholder.markdown(response)
                 if torch.backends.mps.is_available():
                     torch.mps.empty_cache()
