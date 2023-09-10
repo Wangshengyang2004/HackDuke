@@ -126,9 +126,6 @@ if option == 'U-Net Segmentation':
 
 
 if option == 'Chatbot':
-    history = ""
-    if history not in st.session_state:
-        st.session_state.history = []
     model, tokenizer = init_model()
     messages = init_chat_history()
 
@@ -136,11 +133,10 @@ if option == 'Chatbot':
         with st.chat_message("user", avatar='🧑‍💻'):
             st.markdown(prompt)
         messages.append({"role": "user", "content": prompt})
-        st.session_state.history = convert_messages_to_string(messages)
         print(f"[user] {prompt}", flush=True)
         with st.chat_message("assistant", avatar='🤖'):
             placeholder = st.empty()
-            for response in model.chat_stream(tokenizer, prompt, history=st.session_state.history, stream=True):
+            for response in model.chat_stream(tokenizer, prompt, history=convert_messages_to_string(messages), stream=True):
                 placeholder.markdown(response)
                 if torch.backends.mps.is_available():
                     torch.mps.empty_cache()
