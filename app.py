@@ -30,6 +30,13 @@ def translate_chinese_to_english(chinese_text):
     # Return the translated text.
     return translated.text
 
+def convert_messages_to_string(messages):
+    history_str = ""
+    for message in messages:
+        role = message["role"]
+        content = message["content"]
+        history_str += f"[{role}] {content} "
+    return history_str
 
 
 # Set fixed settings (equivalent to parsed arguments in the original code)
@@ -58,7 +65,7 @@ def clear_chat_history():
 
 def init_chat_history():
     with st.chat_message("assistant", avatar='🤖'):
-        st.markdown("您好，我是COVID-19 Smart Doctor，很高兴为您服务🥰")
+        st.markdown("您好，我是COVID-19 智慧医生，很高兴为您服务🥰 Hi, I'm COVID-19 Smart Doctor, happy to answer your concern toward virus")
 
     if "messages" in st.session_state:
         for message in st.session_state.messages:
@@ -119,7 +126,7 @@ if option == 'U-Net Segmentation':
 
 
 if option == 'Chatbot':
-    history = []
+    history = ""
     if history not in st.session_state:
         st.session_state.history = []
     model, tokenizer = init_model()
@@ -129,11 +136,11 @@ if option == 'Chatbot':
         with st.chat_message("user", avatar='🧑‍💻'):
             st.markdown(prompt)
         messages.append({"role": "user", "content": prompt})
-        st.session_state.history.append(prompt)
+        st.session_state.history = convert_messages_to_string(messages)
         print(f"[user] {prompt}", flush=True)
         with st.chat_message("assistant", avatar='🤖'):
             placeholder = st.empty()
-            for response in model.chat_stream(tokenizer, prompt, history=None, stream=True):
+            for response in model.chat_stream(tokenizer, prompt, history=st.session_state.history, stream=True):
                 placeholder.markdown(response)
                 if torch.backends.mps.is_available():
                     torch.mps.empty_cache()
