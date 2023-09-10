@@ -1,4 +1,6 @@
 import streamlit as st
+from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers.generation import GenerationConfig
 from PIL import Image
 from utils import segment_single_image, segment_images_to_video
 import matplotlib.pyplot as plt
@@ -10,8 +12,7 @@ import numpy as np
 import tqdm
 import json
 import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
-from transformers.generation import GenerationConfig
+
 # ----------------------- Some functions -----------------------------
 from googletrans import Translator
 
