@@ -71,14 +71,20 @@ tab1, tab2, tab3 = st.tabs(["Segmentation", "Chatbot", "About"])
 
 with tab1:
     st.header('Segmentation')
-    st.write('upload image')
-    # Example usage:
-    pil_image = Image.open('path/to/your/image.jpg')
-    segmented_image = segment_single_image(pil_image)
+    
+    uploaded_file = st.file_uploader("Choose an image...", type=['jpg', 'jpeg', 'png'])
 
-    # Display the segmented image
-    plt.imshow(segmented_image, cmap='gray')
-    plt.show()
+    if uploaded_file is not None:
+        st.write("Uploaded image:")
+        pil_image = Image.open(uploaded_file)
+        st.image(pil_image, caption='Uploaded Image', use_column_width=True)
+        
+        st.write("Performing segmentation...")
+        segmented_image = segment_single_image(pil_image)
+    
+    st.write("Segmented image:")
+    st.image(segmented_image, caption='Segmented Image', use_column_width=True)
+
 
 
 with tab2:
