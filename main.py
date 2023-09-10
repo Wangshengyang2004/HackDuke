@@ -91,7 +91,7 @@ with tab1:
 
 with tab2:
     st.header('Video Segmentation')
-    on = st.toggle('Using example data', value=True)
+    on = st.toggle('Using example data', value=False)
     if on:
         # Assuming test images are stored in 'processed/test' directory
         test_img_paths = natsorted(glob.glob('processed/test/*/img_*'))
