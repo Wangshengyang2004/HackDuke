@@ -58,7 +58,7 @@ def clear_chat_history():
 
 def init_chat_history():
     with st.chat_message("assistant", avatar='🤖'):
-        st.markdown("您好，我是百川大模型，很高兴为您服务🥰")
+        st.markdown("您好，我是COVID-19 Smart Doctor，很高兴为您服务🥰")
 
     if "messages" in st.session_state:
         for message in st.session_state.messages:
@@ -115,6 +115,9 @@ if option == 'U-Net Segmentation':
 
 
 if option == 'Chatbot':
+    history = []
+    if history not in st.session_state:
+        st.session_state.history = []
     model, tokenizer = init_model()
     messages = init_chat_history()
 
@@ -122,13 +125,16 @@ if option == 'Chatbot':
         with st.chat_message("user", avatar='🧑‍💻'):
             st.markdown(prompt)
         messages.append({"role": "user", "content": prompt})
+        st.session_state.history.append(prompt)
         print(f"[user] {prompt}", flush=True)
         with st.chat_message("assistant", avatar='🤖'):
             placeholder = st.empty()
-            for response in model.chat_stream(tokenizer, prompt, history=None, stream=True):
+            for response in model.chat_stream(tokenizer, prompt, history=st.session_state.history, stream=True):
                 placeholder.markdown(response)
                 if torch.backends.mps.is_available():
                     torch.mps.empty_cache()
+            translation = st.chat_message("assistant")
+            translation.write(translate_chinese_to_english(response))
         messages.append({"role": "assistant", "content": response})
         print(json.dumps(messages, ensure_ascii=False), flush=True)
 
