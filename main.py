@@ -2,6 +2,12 @@ import streamlit as st
 from PIL import Image
 from utils import segment_single_image
 import matplotlib.pyplot as plt
+import natsorted
+import glob
+import cv2
+import os
+import numpy as np
+import tqdm
 # ----------------------- Some functions -----------------------------
 from googletrans import Translator
 
@@ -25,7 +31,7 @@ import streamlit as st
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 # Set fixed settings (equivalent to parsed arguments in the original code)
-CHECKPOINT_PATH = './Models/hackduke1_dpo'
+CHECKPOINT_PATH = './Models/hackduke-llm'
 CPU_ONLY = False
 
 st.set_page_config(page_title="HackDuke-COVID-19-Chatbot")
@@ -67,7 +73,7 @@ st.markdown('''
 This is a chatbot that answers questions about COVID-19. It is based on the [COVID-QA]
             ''')
 
-tab1, tab2, tab3 = st.tabs(["Segmentation", "Chatbot", "About"])
+tab1, tab2, tab3, tab4 = st.tabs(["Image Segmentation", "Video Segmentation","Chatbot", "About"])
 
 with tab1:
     st.header('Segmentation')
@@ -85,9 +91,20 @@ with tab1:
     st.write("Segmented image:")
     st.image(segmented_image, caption='Segmented Image', use_column_width=True)
 
-
-
 with tab2:
+    st.header('Video Segmentation')
+    on = st.toggle('Using example data', value=True)
+    if on:
+        # Assuming test images are stored in 'processed/test' directory
+        test_img_paths = natsorted(glob.glob('processed/test/*/img_*'))
+        test_images = [Image.open(img_path).convert('L') for img_path in test_img_paths]
+        
+        # Generate the video
+        segment_images_to_video(test_images, 'example_segmented_video.mp4')
+        
+        st.write('Video generated: example_segmented_video.mp4')
+
+with tab3:
     st.header('Chatbot')
     st.write('chatbot, start your conversation')
     model, tokenizer = init_model()
@@ -113,7 +130,7 @@ with tab2:
         clear_chat_history()
         st.session_state.messages = []
 
-with tab3:
+with tab4:
     st.header('About')
     st.write('''### This project aims to build a chatbot that can answer questions about COVID-19, and can also segment the lung from the CT scan image.
              #### This is a project for HackDuke 2023 September Health Track.
