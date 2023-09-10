@@ -103,13 +103,16 @@ if option == 'U-Net Segmentation':
         on = st.toggle('Using example data', value=False)
         if on:
             # Assuming test images are stored in 'processed/test' directory
-            test_img_paths = natsorted(glob.glob('processed/test/*/img_*'))
-            test_images = [Image.open(img_path).convert('L') for img_path in test_img_paths]
+            test_img_paths = natsorted(glob.glob('processed/test/17/img_*.npy'))
+            test_images = [np.load(img_path) for img_path in test_img_paths]
             
             # Generate the video
             segment_images_to_video(test_images, 'example_segmented_video.mp4')
-            
+            video_file = open('example_segmented_video.mp4', 'rb')
+            video_bytes = video_file.read()
             st.write('Video generated: example_segmented_video.mp4')
+            st.video(video_bytes)
+            
 
 
 

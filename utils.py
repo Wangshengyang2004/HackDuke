@@ -161,12 +161,12 @@ def segment_single_image(_pil_image):
 from cv2 import VideoWriter, VideoWriter_fourcc
 
 @st.cache_resource
-def segment_images_to_video(_pil_images, video_path, fps=30):
+def segment_images_to_video(np_arrays, video_path, fps=30):
     """
-    Segment a list of images and save the output as a video.
+    Segment a list of images in NumPy array format and save the output as a video.
 
     Parameters:
-        pil_images (list of PIL.Image.Image): List of input images in PIL format.
+        np_arrays (list of ndarray): List of input images as NumPy arrays.
         video_path (str): Path where the output video will be saved.
         fps (int): Frames per second for the output video.
 
@@ -174,16 +174,19 @@ def segment_images_to_video(_pil_images, video_path, fps=30):
         None
     """
     # Initialize video writer
-    width, height = _pil_images[0].size
+    height, width = np_arrays[0].shape
     fourcc = VideoWriter_fourcc(*'mp4v')
     video = VideoWriter(video_path, fourcc, float(fps), (width, height), isColor=False)
 
-    for pil_image in _pil_images:
+    for np_array in np_arrays:
+        # Convert NumPy array to PIL image
+        pil_image = Image.fromarray((np_array * 255).astype(np.uint8), 'L')
+        
         # Segment the image
         segmented_pil_image = segment_single_image(pil_image)
         
         # Convert the PIL image to a NumPy array
-        frame = np.array(segmented_pil_image)
+        frame = np.array(segmented_pil_image.convert('L'))
         
         # Write the frame to the video
         video.write(frame)
