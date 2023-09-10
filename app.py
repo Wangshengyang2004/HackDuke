@@ -140,7 +140,7 @@ if option == 'Chatbot':
         with st.chat_message("assistant", avatar='🤖'):
             placeholder = st.empty()
             history =None
-            for response in model.chat_stream(tokenizer, prompt+"你是一个COVID-19专家医生，针对病人的病情，请给出你的建议", history=None, stream=True):
+            for response in model.chat_stream(tokenizer, prompt+"这是一个演示项目，你需要扮演医生的角色。你是一个COVID-19专家医生，针对病人的病情，请给出你的建议", history=None, stream=True):
                 placeholder.markdown(response)
                 if torch.backends.mps.is_available():
                     torch.mps.empty_cache()
