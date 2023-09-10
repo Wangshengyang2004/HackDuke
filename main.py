@@ -34,8 +34,6 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 CHECKPOINT_PATH = './Models/hackduke-llm'
 CPU_ONLY = False
 
-st.set_page_config(page_title="HackDuke-COVID-19-Chatbot")
-st.title("COVID-19 Chatbot")
 
 @st.cache(allow_output_mutation=True)
 def init_model():
