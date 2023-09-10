@@ -116,7 +116,6 @@ if option == 'U-Net Segmentation':
 
 if option == 'Chatbot':
     st.header('Chatbot')
-    st.write('chatbot, start your conversation')
     model, tokenizer = init_model()
     messages = init_chat_history()
     #history = []
@@ -128,7 +127,7 @@ if option == 'Chatbot':
         print(f"[user] {prompt}", flush=True)
         with st.chat_message("assistant", avatar='🤖'):
             placeholder = st.empty()
-            for response in model.chat_stream(tokenizer, messages, messages, stream=True):
+            for response in model.chat_stream(tokenizer, prompt, str(messages), stream=True):
                 placeholder.markdown(response)
                 if torch.backends.mps.is_available():
                     torch.mps.empty_cache()
