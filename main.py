@@ -37,7 +37,7 @@ CPU_ONLY = False
 
 @st.cache_resource
 def init_model():
-    device_map = "cpu" if CPU_ONLY else "auto"
+    device_map = "cuda:0"
     model = AutoModelForCausalLM.from_pretrained(
         CHECKPOINT_PATH,
         device_map=device_map,
